@@ -19,7 +19,7 @@ export default function App() {
   const [selectedQuery, setSelectedQuery] = useState('');
   
   const commonQueries = [
-    "SELECT * FROM users;",
+    "SELECT * FROM currencies;",
     "SELECT COUNT(*) FROM orders;",
     "SELECT name, age FROM customers WHERE age > 30;"
   ];
@@ -80,7 +80,7 @@ export default function App() {
   return (
     <div className="container">
       <FaMoon 
-        size={20} 
+        size={15} 
         onClick={() => setDarkMode(!darkMode)} 
         className='dark-mode-icon' 
         style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer' }}
