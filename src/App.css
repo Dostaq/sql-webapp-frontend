@@ -1,7 +1,7 @@
 /* Apply dark mode globally */
 body {
   background-color: white;
-  color: #3f3a3a;
+  color: black;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -20,8 +20,8 @@ body.dark {
 }
 
 .container {
-  max-width: 600px;
-  margin: 50px auto;
+  max-width:  auto;
+  margin:  auto;
   padding: 20px;
   text-align: center;
   font-family: Arial, sans-serif;
@@ -37,8 +37,8 @@ body.dark {
 }
 
 .btn-toggle {
-  margin: 10px;
-  padding: 10px 20px;
+  margin: 5px;
+  padding: 10px 10px;
   cursor: pointer;
   border: none;
   background-color: #333;

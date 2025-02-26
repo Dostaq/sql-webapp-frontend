@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FaMoon } from 'react-icons/fa';
 import './App.css';
 
 export default function App() {
@@ -54,7 +55,9 @@ export default function App() {
 
   return (
     <div className="container">
-      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle'>Toggle Dark Mode</button>
+      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle dark-mode-btn'>
+        <FaMoon size={20} />
+      </button>
       {!loggedIn ? (
         <div className="login-container">
           <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
