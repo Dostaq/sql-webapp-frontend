@@ -4,8 +4,6 @@ import { FaMoon, FaCopy } from 'react-icons/fa';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-//import 'codemirror/lib/codemirror.css';
-//import 'codemirror/mode/sql/sql';
 import './App.css';
 
 export default function App() {
@@ -17,6 +15,14 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [selectedQuery, setSelectedQuery] = useState('');
+  
+  const commonQueries = [
+    "SELECT * FROM users;",
+    "SELECT COUNT(*) FROM orders;",
+    "SELECT name, age FROM customers WHERE age > 30;"
+  ];
 
   useEffect(() => {
     const root = document.querySelector('.container');
@@ -33,8 +39,9 @@ export default function App() {
       const res = await axios.post('http://localhost:5014/login', { username, password });
       alert(res.data.message);
       setLoggedIn(true);
+      setError('');
     } catch (error) {
-      alert('Login failed: ' + (error.response?.data?.message || error.message));
+      setError('Login failed: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -45,8 +52,9 @@ export default function App() {
       const res = await axios.post('http://localhost:5014/query', { query });
       setResult(res.data);
       setHistory([...history, query].slice(-5));
+      setError('');
     } catch (error) {
-      alert('Query failed: ' + error.message);
+      setError('Query failed: ' + error.message);
     }
     setLoading(false);
   };
@@ -63,6 +71,7 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
   };
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(query);
     alert('Query copied to clipboard');
@@ -70,12 +79,18 @@ export default function App() {
 
   return (
     <div className="container">
-      <FaMoon size={15} onClick={() => setDarkMode(!darkMode)} className='dark-mode-icon' style={{ position: 'absolute', top: '10px', right: '10px' }}/>
-        {!loggedIn ? (
+      <FaMoon 
+        size={20} 
+        onClick={() => setDarkMode(!darkMode)} 
+        className='dark-mode-icon' 
+        style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer' }}
+      />
+      {!loggedIn ? (
         <div className="login-container">
           <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
           <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
           <button onClick={login} className='btn btn-login'>Login</button>
+          {error && <p className='error-message'>{error}</p>}
         </div>
       ) : (
         <div className="query-container">
@@ -87,16 +102,24 @@ export default function App() {
               style={{ cursor: 'pointer', marginLeft: '10px' }} 
             />
           </div>
+          <select onChange={(e) => setSelectedQuery(e.target.value)} value={selectedQuery} className='query-dropdown'>
+            <option value="">Select a common query</option>
+            {commonQueries.map((q, index) => (
+              <option key={index} value={q}>{q}</option>
+            ))}
+          </select>
           <CodeMirror
-            value={query}
+            value={selectedQuery || query}
             extensions={[sql()]}
             theme={darkMode ? vscodeDark : 'light'}
             onChange={(value) => setQuery(value)}
             className='query-editor'
-            style={{ height: '300px', width: '500px', fontSize: '14px', border: '1px solid #ccc', borderRadius: '5px', padding: '5px' }}
+            style={{ height: '300px', fontSize: '14px', border: '1px solid #ccc', borderRadius: '5px', padding: '5px' }}
           />
           <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
           <button onClick={exportCSV} className='btn btn-export'>Export CSV</button>
+          <button onClick={() => axios.post('http://localhost:5014/backup')} className='btn btn-backup'>Run Backup</button>
+          <button onClick={() => axios.post('http://localhost:5014/checkdb')} className='btn btn-checkdb'>Run CHECKDB</button>
         </div>
       )}
       
@@ -107,7 +130,8 @@ export default function App() {
         ))}
       </ul>
       
-      {loading && <p>Loading...</p>}
+      {loading && <p className='loading-message'>Executing query...</p>}
+      {error && <p className='error-message'>{error}</p>}
       
       {result && (
         <table className='result-table'>
