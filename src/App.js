@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaMoon } from 'react-icons/fa';
+import CodeMirror from '@uiw/react-codemirror';
+import { sql } from '@codemirror/lang-sql';
+import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/sql/sql';
 import './App.css';
 
 export default function App() {
@@ -60,18 +65,22 @@ export default function App() {
 
   return (
     <div className="container">
-      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle dark-mode-btn'>
-        <FaMoon size={20} />
-      </button>
-      {!loggedIn ? (
-        <div className="login-container">
+      <FaMoon size={15} onClick={() => setDarkMode(!darkMode)} className='dark-mode-icon' style={{ position: 'absolute', top: '10px', right: '10px' }}/>
+        {!loggedIn ? (
+          <div className="login-container">
           <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
           <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
           <button onClick={login} className='btn btn-login'>Login</button>
         </div>
       ) : (
         <div className="query-container">
-          <textarea value={query} onChange={(e) => setQuery(e.target.value)} className='query-box'></textarea>
+          <CodeMirror
+            value={query}
+            extensions={[sql()]}
+            theme={darkMode ? vscodeDark : 'light'}
+            onChange={(value) => setQuery(value)}
+            className='query-editor'
+          />
           <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
           <button onClick={exportCSV} className='btn btn-export'>Export CSV</button>
         </div>
