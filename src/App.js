@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMoon } from 'react-icons/fa';
+import { FaMoon, FaCopy } from 'react-icons/fa';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/sql/sql';
+//import 'codemirror/lib/codemirror.css';
+//import 'codemirror/mode/sql/sql';
 import './App.css';
 
 export default function App() {
@@ -29,6 +29,7 @@ export default function App() {
 
   const login = async () => {
     try {
+      console.log(username, password);
       const res = await axios.post('http://localhost:5014/login', { username, password });
       alert(res.data.message);
       setLoggedIn(true);
@@ -62,24 +63,37 @@ export default function App() {
     document.body.appendChild(link);
     link.click();
   };
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(query);
+    alert('Query copied to clipboard');
+  };
 
   return (
     <div className="container">
       <FaMoon size={15} onClick={() => setDarkMode(!darkMode)} className='dark-mode-icon' style={{ position: 'absolute', top: '10px', right: '10px' }}/>
         {!loggedIn ? (
-          <div className="login-container">
+        <div className="login-container">
           <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
           <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
           <button onClick={login} className='btn btn-login'>Login</button>
         </div>
       ) : (
         <div className="query-container">
+          <div className="query-header">
+            <h3>SQL Query</h3>
+            <FaCopy 
+              size={18} 
+              onClick={copyToClipboard} 
+              style={{ cursor: 'pointer', marginLeft: '10px' }} 
+            />
+          </div>
           <CodeMirror
             value={query}
             extensions={[sql()]}
             theme={darkMode ? vscodeDark : 'light'}
             onChange={(value) => setQuery(value)}
             className='query-editor'
+            style={{ height: '300px', width: '500px', fontSize: '14px', border: '1px solid #ccc', borderRadius: '5px', padding: '5px' }}
           />
           <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
           <button onClick={exportCSV} className='btn btn-export'>Export CSV</button>

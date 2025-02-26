@@ -2,9 +2,8 @@
 body {
   background-color: white;
   color: black;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: background 0.25s ease, color 0.25s ease;
 }
-
 
 body.dark, .container.dark {
   background-color: #3f3a3a;
@@ -28,7 +27,7 @@ body.dark, .container.dark {
   font-family: Arial, sans-serif;
   background-color: white;
   color: black;
-  transition: background-color 0.5s ease, color 0.5s ease;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Dark Mode */
