@@ -1,4 +1,3 @@
-// Frontend (React + Basic CSS)
 import React, { useState } from 'react';
 import axios from 'axios';
 import './App.css';
@@ -8,41 +7,63 @@ export default function App() {
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const login = async () => {
+    try {
+      const res = await axios.post('http://localhost:5014/login', { username, password });
+      alert(res.data.message);
+      setLoggedIn(true);
+    } catch (error) {
+      alert('Login failed: ' + error.response.data.message);
+    }
+  };
 
   const executeQuery = async () => {
+    if (!loggedIn) return alert('Please log in first');
     setLoading(true);
     try {
       const res = await axios.post('http://localhost:5014/query', { query });
       setResult(res.data);
-      setHistory([...history, query].slice(-5)); // Keep last 5 queries
+      setHistory([...history, query].slice(-5));
     } catch (error) {
       alert('Query failed: ' + error.message);
     }
     setLoading(false);
   };
 
-  const executeBackup = async () => {
-    await axios.post('http://localhost:5014/backup');
-    alert('Backup started');
-  };
-
-  const executeCheckDB = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post('http://localhost:5014/checkdb');
-      setResult(res.data);
-    } catch (error) {
-      alert('CHECKDB failed: ' + error.message);
-    }
-    setLoading(false);
+  const exportCSV = () => {
+    if (!result) return;
+    const csvContent = 'data:text/csv;charset=utf-8,' +
+      Object.keys(result[0]).join(',') + '\n' +
+      result.map(row => Object.values(row).join(',')).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'query_results.csv');
+    document.body.appendChild(link);
+    link.click();
   };
 
   return (
-    <div className='container'>
-      <textarea value={query} onChange={(e) => setQuery(e.target.value)} className='query-box'></textarea>
-      <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
-      <button onClick={executeBackup} className='btn btn-backup'>Backup Database</button>
-      <button onClick={executeCheckDB} className='btn btn-checkdb'>Run CHECKDB</button>
+    <div className={`container ${darkMode ? 'dark' : ''}`}>
+      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle'>Toggle Dark Mode</button>
+      {!loggedIn ? (
+        <div>
+          <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
+          <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
+          <button onClick={login} className='btn btn-login'>Login</button>
+        </div>
+      ) : (
+        <>
+          <textarea value={query} onChange={(e) => setQuery(e.target.value)} className='query-box'></textarea>
+          <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
+          <button onClick={exportCSV} className='btn btn-export'>Export CSV</button>
+        </>
+      )}
       
       <h3>Query History</h3>
       <ul>
