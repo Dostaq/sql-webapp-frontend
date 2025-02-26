@@ -18,7 +18,8 @@ export default function App() {
       alert(res.data.message);
       setLoggedIn(true);
     } catch (error) {
-      alert('Login failed: ' + error.response.data.message);
+      console.error('Login Error:', error.response ? error.response.data : error.message);
+      alert('Login failed: ' + (error.response?.data?.message || 'Server Not Reachable'));
     }
   };
 
