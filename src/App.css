@@ -5,7 +5,8 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-body.dark {
+
+body.dark, .container.dark {
   background-color: #3f3a3a;
   color: white;
 }
@@ -27,14 +28,11 @@ body.dark {
   font-family: Arial, sans-serif;
   background-color: white;
   color: black;
-  transition: background 0.3s ease, color 0.3s ease;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 /* Dark Mode */
-.container.dark {
-  background-color: #121212;
-  color: white;
-}
+
 
 .btn-toggle {
   margin: 5px;

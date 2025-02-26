@@ -14,7 +14,12 @@ export default function App() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    document.body.classList.toggle('dark', darkMode);
+    const root = document.querySelector('.container');
+    if (darkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
   }, [darkMode]);
 
   const login = async () => {
