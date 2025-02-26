@@ -1,11 +1,54 @@
+/* Apply dark mode globally */
+body {
+  background-color: white;
+  color: #3f3a3a;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark {
+  background-color: #3f3a3a;
+  color: white;
+}
+
+/* Ensure the container takes full height */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .container {
   max-width: 600px;
   margin: 50px auto;
   padding: 20px;
   text-align: center;
   font-family: Arial, sans-serif;
+  background-color: white;
+  color: black;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* Dark Mode */
+.container.dark {
+  background-color: #121212;
+  color: white;
+}
+
+.btn-toggle {
+  margin: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background-color: #333;
+  color: white;
+  border-radius: 5px;
+}
+
+.btn-toggle:hover {
+  background-color: #555;
+}
 .query-box {
   width: 100%;
   height: 100px;
@@ -41,9 +84,7 @@
 .btn-checkdb {
   background-color: #007bff;
 }
-.btn-toggle{
-  background-color: #6f7172;
-}
+
 .btn:hover {
   opacity: 0.8;
 }

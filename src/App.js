@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
 
@@ -12,14 +12,17 @@ export default function App() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    document.body.classList.toggle('dark', darkMode);
+  }, [darkMode]);
+
   const login = async () => {
     try {
       const res = await axios.post('http://localhost:5014/login', { username, password });
       alert(res.data.message);
       setLoggedIn(true);
     } catch (error) {
-      console.error('Login Error:', error.response ? error.response.data : error.message);
-      alert('Login failed: ' + (error.response?.data?.message || 'Server Not Reachable'));
+      alert('Login failed: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -50,24 +53,24 @@ export default function App() {
   };
 
   return (
-    <div className={`container ${darkMode ? 'dark' : ''}`}>
-      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle'>Dark Mode</button>
+    <div className="container">
+      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle'>Toggle Dark Mode</button>
       {!loggedIn ? (
-        <div>
+        <div className="login-container">
           <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />
           <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} />
           <button onClick={login} className='btn btn-login'>Login</button>
         </div>
       ) : (
-        <>
+        <div className="query-container">
           <textarea value={query} onChange={(e) => setQuery(e.target.value)} className='query-box'></textarea>
           <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
           <button onClick={exportCSV} className='btn btn-export'>Export CSV</button>
-        </>
+        </div>
       )}
       
       <h3>Query History</h3>
-      <ul>
+      <ul className="history-list">
         {history.map((q, index) => (
           <li key={index} onClick={() => setQuery(q)} className='query-history'>{q}</li>
         ))}
