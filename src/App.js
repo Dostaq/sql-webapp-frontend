@@ -51,7 +51,7 @@ export default function App() {
 
   return (
     <div className={`container ${darkMode ? 'dark' : ''}`}>
-      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle'>Toggle Dark Mode</button>
+      <button onClick={() => setDarkMode(!darkMode)} className='btn btn-toggle'>Dark Mode</button>
       {!loggedIn ? (
         <div>
           <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} />

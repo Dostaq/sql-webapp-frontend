@@ -30,6 +30,10 @@
   background-color: #007bff;
 }
 
+.btn-export {
+  background-color: #007bff;
+}
+
 .btn-backup {
   background-color: #007bff;
 }
@@ -37,7 +41,9 @@
 .btn-checkdb {
   background-color: #007bff;
 }
-
+.btn-toggle{
+  background-color: #6f7172;
+}
 .btn:hover {
   opacity: 0.8;
 }
