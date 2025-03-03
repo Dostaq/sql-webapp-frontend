@@ -138,5 +138,10 @@ body.dark, .container.dark {
   border-radius: 5px;
   width: 100%;
 }
-
+.logo {
+  width: 25%; /* Adjust width as needed */
+  height: auto; /* Maintains aspect ratio */
+  display: block;
+  margin: 0 auto 20px; /* Centers logo with some space below */
+}
 

@@ -78,7 +78,7 @@ export default function App() {
       />
       {!loggedIn ? (
         <div className="login-container">
-          <img src="/logo.png" alt="Logo" className="logo" />
+          <img src="/logo-cofconew.png" alt="Logo" className="logo" />
           <h2 className="login-title">SQL Server Dashboard</h2>
           <div className="login-box">
             <div className="input-group">
