@@ -4,7 +4,6 @@ import { FaMoon, FaCopy } from 'react-icons/fa';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-//import logo from '/logo-cofco new.png'
 
 import './App.css';
 
@@ -19,7 +18,11 @@ export default function App() {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    document.body.classList.toggle('dark', darkMode);
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
   }, [darkMode]);
 
   const login = async () => {
@@ -64,7 +67,7 @@ export default function App() {
   };
 
   return (
-    <div className="container" style={{ background: 'linear-gradient(to right, #4b6cb7, #182848)', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className={`container ${darkMode ? 'dark-mode' : ''}`} style={{ background: 'linear-gradient(to right,rgb(237, 254, 107),rgb(35, 55, 94))', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <FaMoon 
         size={20} 
         onClick={() => setDarkMode(!darkMode)} 
