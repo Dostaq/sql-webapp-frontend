@@ -19,9 +19,11 @@ export default function App() {
 
   useEffect(() => {
     if (darkMode) {
-      document.body.classList.add('dark-mode');
+      document.documentElement.classList.add('dark-mode');
+      document.documentElement.classList.remove('light-mode');
     } else {
-      document.body.classList.remove('dark-mode');
+      document.documentElement.classList.add('light-mode');
+      document.documentElement.classList.remove('dark-mode');
     }
   }, [darkMode]);
 
@@ -67,7 +69,7 @@ export default function App() {
   };
 
   return (
-    <div className={`container ${darkMode ? 'dark-mode' : ''}`} style={{ background: 'linear-gradient(to right,rgb(237, 254, 107),rgb(35, 55, 94))', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div className={`container ${darkMode ? 'dark-mode' : 'light-mode'}`}>
       <FaMoon 
         size={20} 
         onClick={() => setDarkMode(!darkMode)} 
@@ -75,14 +77,18 @@ export default function App() {
         style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer' }}
       />
       {!loggedIn ? (
-        <div className="login-container" style={{ textAlign: 'center', background: 'white', padding: '30px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
-          <img src="/logo-cofconew.png" alt="Logo" style={{ width: '80px', marginBottom: '15px' }} />
-          <h2 style={{ marginBottom: '20px' }}>SQL Server Dashboard</h2>
-          <div className="login-inputs" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} className='login-input' style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
-            <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} className='login-input' style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
+        <div className="login-container">
+          <img src="/logo.png" alt="Logo" className="logo" />
+          <h2 className="login-title">SQL Server Dashboard</h2>
+          <div className="login-box">
+            <div className="input-group">
+              <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} className='login-input' />
+            </div>
+            <div className="input-group">
+              <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)} className='login-input' />
+            </div>
+            <button onClick={login} className='btn btn-login'>Login</button>
           </div>
-          <button onClick={login} className='btn btn-login' style={{ marginTop: '15px', padding: '10px 20px', borderRadius: '5px', border: 'none', background: '#4b6cb7', color: 'white', cursor: 'pointer' }}>Login</button>
         </div>
       ) : (
         <div className="query-container">
@@ -91,7 +97,7 @@ export default function App() {
             <FaCopy 
               size={18} 
               onClick={copyToClipboard} 
-              style={{ cursor: 'pointer', marginLeft: '10px' }} 
+              className='copy-icon' 
             />
           </div>
           <CodeMirror
@@ -99,8 +105,7 @@ export default function App() {
             extensions={[sql()]}
             theme={darkMode ? vscodeDark : 'light'}
             onChange={(value) => setQuery(value)}
-            className='query-editor'
-            style={{ height: '300px', fontSize: '14px', border: '1px solid #ccc', borderRadius: '5px', padding: '5px' }}
+            className='query-editor bordered-editor'
           />
           <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
           <button onClick={exportCSV} className='btn btn-export'>Export CSV</button>
