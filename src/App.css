@@ -45,7 +45,7 @@ body.dark, .container.dark {
 
 
 .query-box {
-  width: 100%;
+  width: 500px;
   height: 100px;
   margin-bottom: 10px;
   padding: 10px;
@@ -145,3 +145,10 @@ body.dark, .container.dark {
   margin: 0 auto 20px; /* Centers logo with some space below */
 }
 
+.query-editor {
+  min-height: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 14px;
+}

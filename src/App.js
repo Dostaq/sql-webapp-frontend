@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMoon, FaCopy } from 'react-icons/fa';
+import { FaMoon, FaCopy, FaPlay, FaDatabase } from 'react-icons/fa';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
@@ -16,6 +16,7 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [databases, setDatabases] = useState([]);
 
   useEffect(() => {
     if (darkMode) {
@@ -27,6 +28,10 @@ export default function App() {
     }
   }, [darkMode]);
 
+  useEffect(() => {
+    if (loggedIn) fetchDatabases();
+  }, [loggedIn]);
+
   const login = async () => {
     try {
       const res = await axios.post('http://localhost:5014/login', { username, password });
@@ -34,6 +39,24 @@ export default function App() {
       setLoggedIn(true);
     } catch (error) {
       alert('Login failed: ' + (error.response?.data?.message || error.message));
+    }
+  };
+
+  const fetchDatabases = async () => {
+    try {
+      const res = await axios.get('http://localhost:5014/databases');
+      setDatabases(res.data);
+    } catch (error) {
+      alert('Failed to fetch databases: ' + error.message);
+    }
+  };
+
+  const backupDatabase = async (dbName) => {
+    try {
+      await axios.post('http://localhost:5014/backup', { database: dbName });
+      alert(`Backup started for ${dbName}`);
+    } catch (error) {
+      alert('Backup failed: ' + error.message);
     }
   };
 
@@ -48,19 +71,6 @@ export default function App() {
       alert('Query failed: ' + error.message);
     }
     setLoading(false);
-  };
-
-  const exportCSV = () => {
-    if (!result) return;
-    const csvContent = 'data:text/csv;charset=utf-8,' +
-      Object.keys(result[0]).join(',') + '\n' +
-      result.map(row => Object.values(row).join(',')).join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'query_results.csv');
-    document.body.appendChild(link);
-    link.click();
   };
 
   const copyToClipboard = () => {
@@ -78,7 +88,7 @@ export default function App() {
       />
       {!loggedIn ? (
         <div className="login-container">
-          <img src="/logo-cofconew.png" alt="Logo" className="logo" />
+          <img src="/logo.png" alt="Logo" className="logo" style={{ maxWidth: '150px' }} />
           <h2 className="login-title">SQL Server Dashboard</h2>
           <div className="login-box">
             <div className="input-group">
@@ -91,55 +101,59 @@ export default function App() {
           </div>
         </div>
       ) : (
-        <div className="query-container">
-          <div className="query-header">
-            <h3>SQL Query</h3>
-            <FaCopy 
-              size={18} 
-              onClick={copyToClipboard} 
-              className='copy-icon' 
-            />
-          </div>
-          <CodeMirror
-            value={query}
-            extensions={[sql()]}
-            theme={darkMode ? vscodeDark : 'light'}
-            onChange={(value) => setQuery(value)}
-            className='query-editor bordered-editor'
-          />
-          <button onClick={executeQuery} className='btn btn-run'>Run Query</button>
-          <button onClick={exportCSV} className='btn btn-export'>Export CSV</button>
-        </div>
-      )}
-      
-      <h3>Query History</h3>
-      <ul className="history-list">
-        {history.map((q, index) => (
-          <li key={index} onClick={() => setQuery(q)} className='query-history'>{q}</li>
-        ))}
-      </ul>
-      
-      {loading && <p>Loading...</p>}
-      
-      {result && (
-        <table className='result-table'>
-          <thead>
-            <tr>
-              {Object.keys(result[0] || {}).map((key) => (
-                <th key={key}>{key}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {result.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {Object.values(row).map((value, colIndex) => (
-                  <td key={colIndex}>{value}</td>
+        <>
+          <div className="database-container">
+            <h3>Databases</h3>
+            <table className='database-table'>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Size (MB)</th>
+                  <th>Created On</th>
+                  <th>Last Backup</th>
+                  <th>Backup</th>
+                </tr>
+              </thead>
+              <tbody>
+                {databases.map((db, index) => (
+                  <tr key={index}>
+                    <td>{db.name}</td>
+                    <td>{db.size}</td>
+                    <td>{db.create_date}</td>
+                    <td>{db.last_backup}</td>
+                    <td>
+                      <button className='backup-button' onClick={() => backupDatabase(db.name)}>Backup</button>
+                    </td>
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="query-container">
+            <div className="query-editor-container" style={{ width: '80%', height: '400px' }}>
+              <div className="query-editor-header">
+                <h3>SQL Query Editor</h3>
+                <div className="query-toolbar">
+                  <button className='run-button' onClick={executeQuery} title='Run Query'>
+                    <FaPlay size={16} />
+                  </button>
+                  <button className='copy-button' onClick={copyToClipboard} title='Copy Query'>
+                    <FaCopy size={16} />
+                  </button>
+                </div>
+              </div>
+              <CodeMirror
+                value={query}
+                extensions={[sql()]}
+                theme={darkMode ? vscodeDark : 'light'}
+                onChange={(value) => setQuery(value)}
+                className='query-editor bordered-editor'
+                style={{ height: '350px', fontSize: '14px', border: '1px solid #ccc', borderRadius: '5px' }}
+              />
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
