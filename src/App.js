@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaMoon, FaCopy, FaPlay, FaDatabase } from 'react-icons/fa';
+import { FaMoon, FaCopy, FaPlay } from 'react-icons/fa';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
-
 import './App.css';
 
 export default function App() {
   const [query, setQuery] = useState('');
+  const [backupHistory, setBackupHistory] = useState([]);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -52,13 +52,27 @@ export default function App() {
   };
 
   const backupDatabase = async (dbName) => {
+    setLoading(true);
     try {
-      await axios.post('http://localhost:5014/backup', { database: dbName });
-      alert(`Backup started for ${dbName}`);
+        const res = await axios.post('http://localhost:5014/backup', { database: dbName });
+        alert(`Backup started for ${dbName}`);
     } catch (error) {
-      alert('Backup failed: ' + error.message);
+        alert('Backup failed: ' + error.message);
     }
-  };
+    setLoading(false);
+};
+  const fetchBackupHistory = async () => {
+    try {
+      const res = await axios.get('http://localhost:5014/backup-history');
+      setBackupHistory(res.data);
+    } catch (error) {
+      alert('Failed to fetch backup history: ' + error.message);
+    }
+};
+
+  useEffect(() => {
+  fetchBackupHistory();
+  }, []);
 
   const executeQuery = async () => {
     if (!loggedIn) return alert('Please log in first');
@@ -158,3 +172,4 @@ export default function App() {
     </div>
   );
 }
+
