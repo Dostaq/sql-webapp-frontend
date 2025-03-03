@@ -4,6 +4,7 @@ import { FaMoon, FaCopy } from 'react-icons/fa';
 import CodeMirror from '@uiw/react-codemirror';
 import { sql } from '@codemirror/lang-sql';
 import { vscodeDark } from '@uiw/codemirror-theme-vscode';
+//import logo from '/logo-cofco new.png'
 
 import './App.css';
 
@@ -72,7 +73,7 @@ export default function App() {
       />
       {!loggedIn ? (
         <div className="login-container" style={{ textAlign: 'center', background: 'white', padding: '30px', borderRadius: '10px', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)' }}>
-          <img src="/logo.png" alt="Logo" style={{ width: '80px', marginBottom: '15px' }} />
+          <img src="/logo-cofco new.png" alt="Logo" style={{ width: '80px', marginBottom: '15px' }} />
           <h2 style={{ marginBottom: '20px' }}>SQL Server Dashboard</h2>
           <div className="login-inputs" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             <input type='text' placeholder='Username' value={username} onChange={(e) => setUsername(e.target.value)} className='login-input' style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }} />
