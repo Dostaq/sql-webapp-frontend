@@ -107,7 +107,8 @@ body.dark, .container.dark {
 }
 
 .light-mode {
-  background: linear-gradient(to right, #659999, #f4791f);
+  /*background: linear-gradient(to right, #659999, #f4791f);*/
+  background: #E5E6E4;
   color: black;
 }
 
